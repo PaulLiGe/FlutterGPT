@@ -29,23 +29,23 @@ class Message {
         sendTime: json['sendTime']);
   }
 
-  // Message copyWith(
-  //     {String? content, bool? isUserSend, DateTime? sendTime, String? id}) {
-  //   return Message(
-  //       content: content ?? this.content,
-  //       isUserSend: isUserSend ?? this.isUserSend,
-  //       sendTime: sendTime ?? this.sendTime,
-  //       id: id ?? this.id);
-  // }
-}
-
-extension MessageExtension on Message {
   Message copyWith(
-      {String? id, String? content, bool? isUserSend, DateTime? sendTime}) {
+      {String? content, bool? isUserSend, DateTime? sendTime, String? id}) {
     return Message(
-        content: id ?? this.id,
+        content: content ?? this.content,
         isUserSend: isUserSend ?? this.isUserSend,
         sendTime: sendTime ?? this.sendTime,
         id: id ?? this.id);
   }
 }
+
+// extension MessageExtension on Message {
+//   Message copyWith(
+//       {String? id, String? content, bool? isUserSend, DateTime? sendTime}) {
+//     return Message(
+//         content: id ?? this.id,
+//         isUserSend: isUserSend ?? this.isUserSend,
+//         sendTime: sendTime ?? this.sendTime,
+//         id: id ?? this.id);
+//   }
+// }

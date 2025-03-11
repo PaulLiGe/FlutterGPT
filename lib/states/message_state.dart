@@ -1,8 +1,15 @@
 import 'package:chatgpt/models/message.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import '../services/injection.dart';
 
 class MessageList extends StateNotifier<List<Message>> {
-  MessageList() : super([]);
+  MessageList() : super([]) {
+    init();
+  }
+
+  Future<void> init() async {
+    state = await db.messageDao.findAllMessages();
+  }
 
   void addMessage(Message message) {
     state = [...state, message];
@@ -10,15 +17,16 @@ class MessageList extends StateNotifier<List<Message>> {
 
   void upsertMessage(Message message) {
     final index = state.indexWhere((e) => e.id == message.id);
+    var handledMessage = message;
+    if (index >= 0) {
+      handledMessage = handledMessage.copyWith(
+          content: state[index].content + handledMessage.content);
+    }
+    db.messageDao.upsertMessage(handledMessage);
     if (index == -1) {
-      state = [...state, message];
+      state = [...state, handledMessage];
     } else {
-      List<Message> newList = List.from(state);
-      final oldMessage = newList[index];
-      newList[index] =
-          message.copyWith(content: oldMessage.content + message.content);
-      state = newList;
-      print("重新build拉,是upsert了");
+      state = [...state]..[index] = handledMessage;
     }
   }
 }

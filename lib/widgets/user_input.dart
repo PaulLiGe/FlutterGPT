@@ -6,6 +6,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import '../models/message.dart';
 import 'package:logger/logger.dart';
 import 'package:chatgpt/services/injection.dart';
+import 'package:openai_api/openai_api.dart';
 
 class UserInputWidget extends HookConsumerWidget {
   const UserInputWidget({super.key});
@@ -38,7 +39,7 @@ class UserInputWidget extends HookConsumerWidget {
         sendTime: DateTime.now(),
         id: uuid.v4());
     controller.clear();
-    ref.read(messageProvider.notifier).addMessage(message);
+    ref.read(messageProvider.notifier).upsertMessage(message);
     _requestChatGPT(ref, content);
   }
 
@@ -46,6 +47,14 @@ class UserInputWidget extends HookConsumerWidget {
     ref.read(chatUIProvider.notifier).setRequestLoading(true);
     try {
       String id = uuid.v4();
+      // ChatCompletionResponse respose = await chatgpt.sendChat(content);
+      // print('等下结果${respose.choices.first.delta?.content ?? ""}');
+      // final message = Message(
+      //     content: respose.choices.first.delta?.content ?? "",
+      //     isUserSend: false,
+      //     sendTime: DateTime.now(),
+      //     id: id);
+      // ref.read(messageProvider.notifier).upsertMessage(message);
       await chatgpt.streamChat(
         content,
         success: (text) {
